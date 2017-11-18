@@ -1,7 +1,11 @@
 #include "pngimage.h"
 #include <algorithm>
+#include "module.h"
+#include <vector>
+#include "geometry.h"
 
-const int size = 256;
+const int width = 256;
+const int height = 256;
 const Color white = Color(255, 255, 255, 255);
 const Color red = Color(255, 0, 0, 255);
 const Color green = Color(0, 255, 0, 255);
@@ -58,7 +62,7 @@ const Color blue = Color(0, 0, 255, 255);
 
 void test_img_rgb()
 {
-    PNGImage img(size, size, PNGImage::Format::RGB);
+    PNGImage img(width, height, PNGImage::Format::RGB);
     unsigned w = img.get_width(), h = img.get_height();
     for (unsigned i = 0; i < h; i++)
     {
@@ -76,7 +80,7 @@ void test_img_rgb()
 
 void test_img_rgba()
 {
-    PNGImage img(size, size, PNGImage::Format::RGBA);
+    PNGImage img(width, height, PNGImage::Format::RGBA);
     unsigned w = img.get_width(), h = img.get_height();
     for (unsigned i = 0; i < h; i++)
     {
@@ -227,13 +231,33 @@ int main()
     // test_rgba();
     // test_img_rgb();
     // test_img_rgba();
-    PNGImage img(size, size, PNGImage::Format::RGB);
-    line5(13, 20, 80, 40, img, white);
-    line5(20, 13, 40, 80, img, red); 
-    line5(80, 40, 13, 20, img, red);
-    line5(30, 40, 30, 80, img, red);
-    line5(30, 40, 80, 40, img, red);
+    PNGImage img(width, height, PNGImage::Format::RGB);
+    // line5(13, 20, 80, 40, img, white);
+    // line5(20, 13, 40, 80, img, red); 
+    // line5(80, 40, 13, 20, img, red);
+    // line5(30, 40, 30, 80, img, red);
+    // line5(30, 40, 80, 40, img, red);
 
-    img.write_png_file("line.png");
+    // img.write_png_file("line.png");
+
+    Module module("./obj/african_head.obj");
+
+    for (int i = 0; i < module.nfaces(); i++)
+    {
+        std::vector<int> face = module.face(i);
+        for (int j = 0; j < 3; j++)
+        {
+            Vec3f v0 = module.vert(face[j]);
+            Vec3f v1 = module.vert(face[(j+1) % 3]);
+            int x0 = (v0.x+1.)*width/2.; 
+            int y0 = (v0.y+1.)*height/2.; 
+            int x1 = (v1.x+1.)*width/2.; 
+            int y1 = (v1.y+1.)*height/2.;
+            line5(x0, y0, x1, y1, img, white);
+        }
+    }
+
+    img.write_png_file("african_head.png");
+
     return 0;
 }
