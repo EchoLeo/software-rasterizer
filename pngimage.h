@@ -14,6 +14,7 @@ struct Color
     };
 
     Color() : val(0) {}
+    Color(unsigned char r_, unsigned char g_, unsigned char b_, unsigned char a_ = 0) : r(r_), g(g_), b(b_), a(a_) {}
 };
 
 

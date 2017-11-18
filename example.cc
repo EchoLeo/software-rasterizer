@@ -1,6 +1,10 @@
 #include "pngimage.h"
 
 const int size = 256;
+const Color white = Color(255, 255, 255, 255);
+const Color red = Color(255, 0, 0, 255);
+const Color green = Color(0, 255, 0, 255);
+const Color blue = Color(0, 0, 255, 255);
 
 // void test_rgb()
 // {
@@ -88,11 +92,26 @@ void test_img_rgba()
     img.write_png_file("img_rgba.png");
 }
 
+void line(int x0, int y0, int x1, int y1, PNGImage &img, const Color &c)
+{
+    for (int x = x0; x <= x1; x++)
+    {
+        float t = (x - x0)/(float)(x1 - x0);
+        int y = y0*(1-t) + y1*t;
+        img.set(x, y, c);
+    }
+}
+
 int main()
 {
     // test_rgb();
     // test_rgba();
-    test_img_rgb();
-    test_img_rgba();
+    // test_img_rgb();
+    // test_img_rgba();
+    PNGImage img(size, size, PNGImage::Format::RGB);
+    line(13, 20, 80, 40, img, white);
+    line(20, 13, 40, 80, img, red); 
+    line(80, 40, 13, 20, img, red);
+    img.write_png_file("line.png");
     return 0;
 }
