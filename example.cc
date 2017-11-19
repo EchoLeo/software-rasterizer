@@ -4,8 +4,8 @@
 #include <vector>
 #include "geometry.h"
 
-const int width = 256;
-const int height = 256;
+const int width = 1024;
+const int height = 1024;
 const Color white = Color(255, 255, 255, 255);
 const Color red = Color(255, 0, 0, 255);
 const Color green = Color(0, 255, 0, 255);
@@ -225,21 +225,33 @@ void line5(int x0, int y0, int x1, int y1, PNGImage &img, const Color &c)
     }
 }
 
-int main()
+void line5(Vec2i v0, Vec2i v1, PNGImage &img, const Color &c)
 {
-    // test_rgb();
-    // test_rgba();
-    // test_img_rgb();
-    // test_img_rgba();
+    line5(v0.x, v0.y, v1.x, v1.y, img, c);
+}
+
+void triangle(Vec2i v0, Vec2i v1, Vec2i v2, PNGImage &img, const Color &c)
+{
+    line5(v0, v1, img, c);
+    line5(v1, v2, img, c);
+    line5(v2, v0, img, c);
+}
+
+void test_line()
+{
     PNGImage img(width, height, PNGImage::Format::RGB);
-    // line5(13, 20, 80, 40, img, white);
-    // line5(20, 13, 40, 80, img, red); 
-    // line5(80, 40, 13, 20, img, red);
-    // line5(30, 40, 30, 80, img, red);
-    // line5(30, 40, 80, 40, img, red);
+    line5(13, 20, 80, 40, img, white);
+    line5(20, 13, 40, 80, img, red); 
+    line5(80, 40, 13, 20, img, red);
+    line5(30, 40, 30, 80, img, red);
+    line5(30, 40, 80, 40, img, red);
 
-    // img.write_png_file("line.png");
+    img.write_png_file("line.png");
+}
 
+void test_module()
+{
+    PNGImage img(width, height, PNGImage::Format::RGB);
     Module module("./obj/african_head.obj");
 
     for (int i = 0; i < module.nfaces(); i++)
@@ -258,6 +270,32 @@ int main()
     }
 
     img.write_png_file("african_head.png");
+}
+
+void test_triangle()
+{
+    PNGImage img(width, height, PNGImage::Format::RGB);
+
+    Vec2i t0[3] = {Vec2i(10, 70),   Vec2i(50, 160),  Vec2i(70, 80)}; 
+    Vec2i t1[3] = {Vec2i(180, 50),  Vec2i(150, 1),   Vec2i(70, 180)}; 
+    Vec2i t2[3] = {Vec2i(180, 150), Vec2i(120, 160), Vec2i(130, 180)}; 
+    triangle(t0[0], t0[1], t0[2], img, red); 
+    triangle(t1[0], t1[1], t1[2], img, white); 
+    triangle(t2[0], t2[1], t2[2], img, green);
+
+    img.write_png_file("triangle.png");
+}
+
+int main()
+{
+    // test_rgb();
+    // test_rgba();
+    test_img_rgb();
+    test_img_rgba();
+    test_line();
+    test_module();
+    test_triangle();
+    
 
     return 0;
 }
