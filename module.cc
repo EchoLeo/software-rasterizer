@@ -38,7 +38,7 @@ Module::Module(const char *filename)
             faces.push_back(f);
         }
     }
-    in.close()
+    in.close();
     std::cerr << "# v# " << verts.size() << " f# " << faces.size() << std::endl;
 }
 
