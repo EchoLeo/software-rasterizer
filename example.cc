@@ -286,6 +286,58 @@ void test_triangle()
     img.write_png_file("triangle.png");
 }
 
+void fill_triangle(Vec2i v0, Vec2i v1, Vec2i v2, PNGImage &img, const Color &c)
+{
+    if ( v0.y > v1.y ) std::swap(v0, v1);
+    if ( v0.y > v2.y ) std::swap(v0, v2);
+    if ( v1.y > v2.y ) std::swap(v1, v2);
+
+    int total_height = v2.y - v0.y;
+    int up_segment = v2.y - v1.y + 1;
+    int down_segment = v1.y - v0.y + 1;
+    for (int y = v0.y; y <= v1.y; y++)
+    {
+        float alpha = (y-v0.y)/(float)(down_segment);
+        float beta = (y-v0.y)/(float)(total_height);
+        Vec2i A = v0 + (v1-v0)*alpha;
+        Vec2i B = v0 + (v2-v0)*beta;
+        if (A.x > B.x)
+            std::swap(A, B);
+        for (int x = A.x; x <= B.x; x++)
+        {
+            img.set(x, y, c);
+        }
+    }
+
+    for (int y = v2.y; y > v1.y; --y)
+    {
+        float alpha = (v2.y-y)/(float)(up_segment);
+        float beta = (v2.y-y)/(float)(total_height);
+        Vec2i A = v2 + (v1-v2)*alpha;
+        Vec2i B = v2 + (v0-v2)*beta;
+        if (A.x > B.x)
+            std::swap(A, B);
+        for (int x = A.x; x <= B.x; x++)
+        {
+            img.set(x, y, c);
+        }
+    }
+}
+
+void test_file_triangle()
+{
+    PNGImage img(width, height, PNGImage::Format::RGB);
+
+    Vec2i t0[3] = {Vec2i(10, 70),   Vec2i(50, 160),  Vec2i(70, 80)}; 
+    Vec2i t1[3] = {Vec2i(180, 50),  Vec2i(150, 1),   Vec2i(70, 180)}; 
+    Vec2i t2[3] = {Vec2i(180, 150), Vec2i(120, 160), Vec2i(130, 180)}; 
+    fill_triangle(t0[0], t0[1], t0[2], img, red); 
+    fill_triangle(t1[0], t1[1], t1[2], img, white); 
+    fill_triangle(t2[0], t2[1], t2[2], img, green);
+
+    img.write_png_file("file_triangle.png");
+}
+
 int main()
 {
     // test_rgb();
@@ -295,6 +347,7 @@ int main()
     test_line();
     test_module();
     test_triangle();
+    test_file_triangle();
     
 
     return 0;
