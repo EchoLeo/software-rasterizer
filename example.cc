@@ -324,6 +324,42 @@ void fill_triangle(Vec2i v0, Vec2i v1, Vec2i v2, PNGImage &img, const Color &c)
     }
 }
 
+void fill_triangle2(Vec2i v0, Vec2i v1, Vec2i v2, PNGImage &img, const Color &c)
+{
+    if ( v0.y > v1.y ) std::swap(v0, v1);
+    if ( v0.y > v2.y ) std::swap(v0, v2);
+    if ( v1.y > v2.y ) std::swap(v1, v2);
+
+    int total_height = v2.y - v0.y;
+    int up_segment = v2.y - v1.y + 1;
+    int down_segment = v1.y - v0.y + 1;
+    for (int y = v0.y; y <= v2.y; y++)
+    {
+        float alpha, beta;
+        Vec2i A, B;
+        if (y <= v1.y)
+        {
+            alpha = (y-v0.y)/(float)(down_segment);
+            beta = (y-v0.y)/(float)(total_height);
+            A = v0 + (v1-v0)*alpha;
+            B = v0 + (v2-v0)*beta;
+        }
+        else
+        {
+            alpha = (v2.y-y)/(float)(up_segment);
+            beta = (v2.y-y)/(float)(total_height);
+            A = v2 + (v1-v2)*alpha;
+            B = v2 + (v0-v2)*beta;
+        }
+        if (A.x > B.x)
+            std::swap(A, B);
+        for (int x = A.x; x <= B.x; x++)
+        {
+            img.set(x, y, c);
+        }
+    }
+}
+
 void test_file_triangle()
 {
     PNGImage img(width, height, PNGImage::Format::RGB);
@@ -331,9 +367,9 @@ void test_file_triangle()
     Vec2i t0[3] = {Vec2i(10, 70),   Vec2i(50, 160),  Vec2i(70, 80)}; 
     Vec2i t1[3] = {Vec2i(180, 50),  Vec2i(150, 1),   Vec2i(70, 180)}; 
     Vec2i t2[3] = {Vec2i(180, 150), Vec2i(120, 160), Vec2i(130, 180)}; 
-    fill_triangle(t0[0], t0[1], t0[2], img, red); 
-    fill_triangle(t1[0], t1[1], t1[2], img, white); 
-    fill_triangle(t2[0], t2[1], t2[2], img, green);
+    fill_triangle2(t0[0], t0[1], t0[2], img, red); 
+    fill_triangle2(t1[0], t1[1], t1[2], img, white); 
+    fill_triangle2(t2[0], t2[1], t2[2], img, green);
 
     img.write_png_file("file_triangle.png");
 }
